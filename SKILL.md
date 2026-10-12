@@ -80,6 +80,31 @@ sources turn a report into evidence; a number no one can trace is an
 anecdote. Use the heading "Source Materials / References" (never
 "Provenance").
 
+## Project layout
+
+The project folder's top level holds the deliverable PDF and nothing else
+the report build produced; the user's own source data stays wherever the
+user put the data. Everything used to build the report goes in one sibling
+subdirectory named `Source-<ReportBaseName>/`:
+
+```
+<project>/
+  <user data, e.g. courseid.xlsx>      # left where the user keeps it
+  <ReportBaseName>.pdf                 # the deliverable, alone at top level
+  Source-<ReportBaseName>/
+    <ReportBaseName>.md
+    analysis/                          # analysis and build scripts
+    <ReportBaseName>_figs/             # figures, merged data, stats JSON
+```
+
+Never write the Markdown source, scripts (`.py`, `.ps1`), figure folders,
+intermediate HTML/CSV/JSON, or logs into the project root: a cluttered
+root buries the deliverable and mixes build debris with the user's files.
+Scripts read the user's data by paths relative to the Source folder
+(`../courseid.xlsx`), so the layout survives a folder rename. Throwaway
+exploration scripts and temporary renders go to the session scratchpad or
+another temp folder, never into the project.
+
 ## Style rules
 
 These rules exist because reports get skimmed: a reader should understand
@@ -175,10 +200,11 @@ sentences around that sentence.
 
 Reference every figure from the prose and caption every figure in italics
 below the image, stating what the figure shows and the one thing to notice.
-Number figures in order of appearance. Keep figure image files in a folder
-beside the report (`<report>_figs/` or `orientation_report_figs/`-style),
-referenced by relative path, so the Markdown renders anywhere and the PDF
-export finds the images. Wide tables: prefer one narrow table with many
+Number figures in order of appearance. Keep figure image files in
+`Source-<ReportBaseName>/<ReportBaseName>_figs/`, beside the Markdown
+source inside the Source folder (see Project layout), referenced by a path
+relative to the `.md`, so the Markdown renders anywhere and the PDF export
+finds the images. Wide tables: prefer one narrow table with many
 rows over a doubled side-by-side layout — doubled layouts overflow the PDF
 page. Long code identifiers in table cells (file names, run tags) do not
 wrap in the PDF export and overflow into the neighbouring column: strip
@@ -197,13 +223,19 @@ blocks bypass the math renderer.
 ## PDF export
 
 Export with pandoc + XeLaTeX (fonts chosen for full µ/φ/Δ/‖ glyph
-coverage):
+coverage), run from inside the Source folder so the relative figure paths
+resolve, writing the PDF one level up to the project top level:
 
 ```bash
-pandoc report.md -o report.pdf --pdf-engine=xelatex \
+cd "Source-<ReportBaseName>"
+pandoc <ReportBaseName>.md -o ../<ReportBaseName>.pdf --pdf-engine=xelatex \
+  --resource-path=. \
   -V geometry:margin=2.2cm -V mainfont="Cambria" \
   -V monofont="Consolas" -V fontsize=10pt -V colorlinks=true
 ```
+
+Intermediate render files (for example a `.print.html`) stay in the
+Source folder or the scratchpad; only the PDF lands at the top level.
 
 Then verify rather than assume: check the page count and spot-check that
 key strings and symbols extracted from the PDF match the source (pypdf
@@ -219,6 +251,8 @@ with equivalent coverage (for example DejaVu Serif / DejaVu Sans Mono).
 
 Reports carry a series version (`v1-0`, `V1-3`) in the filename and title.
 Add findings into the current version until the user states a version
-increment; a new version starts a new file. When restructuring an existing
-report, move content into the lab-report order without dropping any finding
-or number — restructuring changes order, not substance.
+increment; a new version starts a new file, with a new
+`Source-<ReportBaseName>/` folder named after the new version's base
+name. When restructuring an existing report, move content into the
+lab-report order without dropping any finding or number — restructuring
+changes order, not substance.

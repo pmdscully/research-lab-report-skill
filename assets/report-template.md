@@ -67,7 +67,8 @@ survive; honest limits — what the data cannot separate, what was assumed.>
 
 ## 5. Source Materials / References
 
-- <Scripts: repo paths.>
+- <Scripts: repo paths, or `analysis/` paths inside the
+  `Source-<ReportBaseName>/` folder.>
 - <Results: directories or tags; logs; runtime; hardware.>
 - <Source documents: with page numbers.>
 - <Cited literature: numbered references or BibTeX keys.>

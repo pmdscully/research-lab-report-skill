@@ -20,6 +20,10 @@ reports with a fixed, skimmable structure and enforceable style rules.
   appendix.
 - **A report template** (`assets/report-template.md`) to start new
   reports from.
+- **A clutter-free project layout:** only the deliverable PDF (and the
+  user's own data) at the project top level; the Markdown source,
+  `analysis/` scripts and figure folder live in a sibling
+  `Source-<ReportBaseName>/` subdirectory.
 - **A PDF export recipe** (pandoc + XeLaTeX with full glyph coverage)
   and a verification step (page count, extracted-text spot checks,
   re-run of the style greps).
