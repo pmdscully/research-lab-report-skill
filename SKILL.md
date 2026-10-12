@@ -98,13 +98,18 @@ sentences around that sentence.
 2. **No leading phrases.** "The headline survives" begs "which headline?" —
    write the claim: "Cosine decoding with pretraining ranks highest…".
    State the point first; explain detail afterwards.
-3. **Self-describing names.** Never label experiment arms, methods,
-   groups, or conditions with bare letters or digits — no "arm A/B/C",
-   "arm 0/1/2", "Method 1/2", "Group 3", "Condition B". Name the activity
-   or quantity the label stands for, so the name alone tells a reader what
-   was measured or done: `invBhZ` (yaw-invariant feature set), `yawaug8`
-   (learned yaw augmentation), "champion control", "west-heading arm". A
-   label that needs a legend to decode loses the reader at every mention.
+3. **Self-describing names.** Never label experiment branches, methods,
+   groups, or conditions with bare letters or digits — no "A/B/C",
+   "Method 1/2", "Group 3", "Condition B" — and never with the word
+   "arm" at all ("evaluation arm", "Seen arm", "both arms"): "arm" is
+   trial jargon that names nothing; write the thing instead ("the
+   Unseen-Places methodology", "both methodologies", "the west-heading
+   condition"). Name the activity or quantity the label stands for, so
+   the name alone tells a reader what was measured or done: `invBhZ`
+   (yaw-invariant feature set), `yawaug8` (learned yaw augmentation),
+   "champion control". A label that needs a legend to decode loses the
+   reader at every mention. Before delivering, verify:
+   `grep -cinE '\barm(s)?\b' report.md` must return 0.
 4. **Numbers carry units and origin.** Every measured value states units;
    every table says what produced the values. Distinguish measured from
    assumed from cited.
@@ -175,7 +180,12 @@ beside the report (`<report>_figs/` or `orientation_report_figs/`-style),
 referenced by relative path, so the Markdown renders anywhere and the PDF
 export finds the images. Wide tables: prefer one narrow table with many
 rows over a doubled side-by-side layout — doubled layouts overflow the PDF
-page.
+page. Long code identifiers in table cells (file names, run tags) do not
+wrap in the PDF export and overflow into the neighbouring column: strip
+any shared prefix out of the cells and state the prefix once in the
+caption, keep each in-cell code span short, and give that column a wider
+share of the pipe-table separator row (`|------|---|…`) — pandoc reads
+relative column widths from the separator dashes.
 
 ## Math
 
@@ -197,7 +207,11 @@ pandoc report.md -o report.pdf --pdf-engine=xelatex \
 
 Then verify rather than assume: check the page count and spot-check that
 key strings and symbols extracted from the PDF match the source (pypdf
-`extract_text`), and re-run the pronoun grep on the final Markdown. On
+`extract_text`), re-run the pronoun, arm and banned-word greps on the
+final Markdown, and **render every page that carries a table or figure
+(PyMuPDF `get_pixmap`) and look at the rendered pages** — cell text
+overflowing into a neighbouring column, clipped captions and overlapping
+legends survive every text-level check and only show in the pixels. On
 machines without Cambria/Consolas, substitute any installed Unicode font
 with equivalent coverage (for example DejaVu Serif / DejaVu Sans Mono).
 
